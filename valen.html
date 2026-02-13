@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕 Will You Be My Valentine? 💕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Floating hearts background */
+        .heart-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 182, 193, 0.6);
+            transform: rotate(45deg);
+            animation: float 6s infinite;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 182, 193, 0.6);
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            left: -10px;
+        }
+
+        .heart::after {
+            top: -10px;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(45deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 60px 40px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 550px;
+            animation: slideIn 0.8s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .emoji {
+            font-size: 80px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        h1 {
+            color: #e91e63;
+            font-size: 2.5em;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #e91e63;
+            font-size: 2em;
+            margin: 20px 0;
+        }
+
+        .message {
+            color: #555;
+            font-size: 1.2em;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        .image-container {
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .love-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .yes-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .yes-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+        }
+
+        .no-btn {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #666;
+            position: relative;
+        }
+
+        .no-btn:hover {
+            transform: scale(0.9);
+        }
+
+        .know-btn, .dont-know-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            min-width: 150px;
+        }
+
+        .know-btn:hover, .dont-know-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+        }
+
+        .celebration {
+            font-size: 60px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            color: #e91e63;
+            font-weight: bold;
+            margin: 25px 0;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            margin: 20px auto;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #e91e63;
+            border-radius: 50%;
+            animation: spin-loader 1s linear infinite;
+        }
+
+        @keyframes spin-loader {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating hearts background -->
+    <div class="heart-bg" id="heartBg"></div>
+
+    <!-- PAGE 1: Will You Be My Valentine -->
+    <div class="container page active" id="page1">
+        <div class="emoji">💝</div>
+        <h1>Will You Be My Valentine?</h1>
+        <p class="message">
+            Dear Soumiya, 💕<br>
+            Every moment with you feels like magic. ✨<br>
+            You make my heart skip a beat! 💓<br>
+            Would you make me the happiest person alive?
+        </p>
+        
+        <div class="image-container">
+            <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=500&h=400&fit=crop" 
+                 alt="Love" 
+                 class="love-image">
+        </div>
+
+        <div class="buttons">
+            <button class="yes-btn" onclick="answerValentine('Yes')">Yes! 💕</button>
+            <button class="no-btn" id="noBtn" onmouseover="moveButton()">No 😢</button>
+        </div>
+        <div class="spinner" id="spinner1"></div>
+    </div>
+
+    <!-- PAGE 2: Question about Yesterday -->
+    <div class="container page" id="page2">
+        <div class="emoji">💝</div>
+        <h1>Happy Valentine's Day! 🌹</h1>
+        
+        <div class="image-container">
+            <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=500&h=400&fit=crop" 
+                 alt="Valentine Love" 
+                 class="love-image">
+        </div>
+
+        <p class="question-text">
+            Yesterday was the greatest day! ❤️<br>
+            Do you know what today is? 🤔
+        </p>
+
+        <div class="buttons">
+            <button class="know-btn" onclick="answerQuestion('I Know')">I Know! 😊</button>
+            <button class="dont-know-btn" onclick="answerQuestion('I Don\'t Know')">I Don't Know 🤭</button>
+        </div>
+        <div class="spinner" id="spinner2"></div>
+    </div>
+
+    <!-- PAGE 3: Happy First Anniversary -->
+    <div class="container page" id="page3">
+        <div class="celebration">🎉</div>
+        <h1>Happy First Anniversary! 💖</h1>
+        <p class="message">
+            It's our special day, Soumiya! 🥰<br>
+            One year of beautiful moments together! 💕<br>
+            You are my everything! ✨<br>
+            I love you so much! 💓💓💓
+        </p>
+        
+        <div class="image-container">
+            <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=500&h=400&fit=crop" 
+                 alt="Anniversary" 
+                 class="love-image">
+        </div>
+
+        <div class="emoji">😍</div>
+        <p class="message" style="margin-top: 30px;">
+            Thank you for being mine! 💝<br>
+            Here's to many more beautiful years together! 🌹
+        </p>
+    </div>
+
+    <script>
+        // ⚠️ IMPORTANT: REPLACE THIS WITH YOUR GOOGLE APPS SCRIPT URL
+        // After deploying your Google Apps Script, paste the URL here
+        const SHEET_URL = 'https://script.google.com/macros/library/d/1470pLLKX0pEfJYy7s_wjS7HHCf6IpI-lqQFGN09dJCwvDxOG0xNkAWUH/1';        
+        // Store responses
+        let responses = {
+            timestamp: new Date().toISOString(),
+            valentine_answer: '',
+            question_answer: ''
+        };
+
+        // Create floating hearts
+        function createHearts() {
+            const heartBg = document.getElementById('heartBg');
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                heartBg.appendChild(heart);
+            }
+        }
+
+        createHearts();
+
+        // Make "No" button move away
+        function moveButton() {
+            const noBtn = document.getElementById('noBtn');
+            const maxX = window.innerWidth - noBtn.offsetWidth - 100;
+            const maxY = window.innerHeight - noBtn.offsetHeight - 100;
+            
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+            
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+
+        // Save data to Google Sheets
+        async function saveToSheet(data) {
+            try {
+                const response = await fetch(SHEET_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                console.log('Data saved successfully!');
+                return true;
+            } catch (error) {
+                console.error('Error saving data:', error);
+                return true; // Continue anyway even if save fails
+            }
+        }
+
+        // Answer Valentine question (Page 1)
+        async function answerValentine(answer) {
+            responses.valentine_answer = answer;
+            responses.timestamp = new Date().toLocaleString();
+            
+            // Show loading spinner
+            document.getElementById('spinner1').style.display = 'block';
+            
+            // Save to Google Sheets
+            await saveToSheet(responses);
+            
+            // Hide spinner
+            document.getElementById('spinner1').style.display = 'none';
+            
+            // Go to next page
+            document.getElementById('page1').classList.remove('active');
+            document.getElementById('page2').classList.add('active');
+            createConfetti();
+        }
+
+        // Answer the question (Page 2)
+        async function answerQuestion(answer) {
+            responses.question_answer = answer;
+            
+            // Show loading spinner
+            document.getElementById('spinner2').style.display = 'block';
+            
+            // Save to Google Sheets
+            await saveToSheet(responses);
+            
+            // Hide spinner
+            document.getElementById('spinner2').style.display = 'none';
+            
+            // Go to final page
+            document.getElementById('page2').classList.remove('active');
+            document.getElementById('page3').classList.add('active');
+            
+            // Create celebration confetti
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => createConfetti(), i * 30);
+            }
+        }
+
+        // Create confetti effect
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.style.position = 'fixed';
+            confetti.style.width = '10px';
+            confetti.style.height = '10px';
+            confetti.style.backgroundColor = ['#f093fb', '#f5576c', '#ffd700', '#ff69b4'][Math.floor(Math.random() * 4)];
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.top = '-10px';
+            confetti.style.borderRadius = '50%';
+            confetti.style.zIndex = '1000';
+            document.body.appendChild(confetti);
+            
+            const fallDuration = Math.random() * 3 + 2;
+            confetti.animate([
+                { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+            ], {
+                duration: fallDuration * 1000,
+                easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+            });
+            
+            setTimeout(() => confetti.remove(), fallDuration * 1000);
+        }
+    </script>
+</body>
+</html>
